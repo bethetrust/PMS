@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="io.spring.mailsenderbizdem.mapper.AddressGroupMapper"> 
+    <resultMap  type="io.spring.mailsenderbizdem.dto.AddressGroupDto" id="AddressGroupDtoResultMap">
+            <id  column="GROUP_NO" property="groupNo" />
+            <result  column="GROUP_NM" property="groupNm" />
+		    <result column="GROUP_DESC" property="groupDesc"  />
+		    <result column="GROUP_OWNER" property="groupOwner" />
+            <result column="USE_STATUS" property="useStatus" />
+            <result column="REG_DATE" property="regDate" />
+            <result column="REG_ID" property="regId" />
+<<<<<<< HEAD
+            <result column="EIDT_DATE" property="editDate" />
+=======
+            <result column="EDIT_DATE" property="editDate" />
+>>>>>>> testbranch
+            <result column="EDITOR" property="editor" />
+
+            <!--plus for select-->
+            <result column="ADDR_COUNT" property="addrCount"/>
+  </resultMap>
+
+    <insert id="insertAddressGroup" useGeneratedKeys="true" keyProperty="groupNo" keyColumn="GROUP_NO" parameterType="AddressGroupDto">
+        INSERT INTO ADDRESS_GROUP  (GROUP_NM, GROUP_DESC, GROUP_OWNER, REG_DATE, REG_ID)
+        VALUES(#{groupNm}, #{groupDesc}, #{groupOwner}, #{regDate}, #{regId})
+    </insert>
+    <update id="updateAddressGroup"  parameterType="AddressGroupDto">
+        UPDATE ADDRESS_GROUP 
+        SET GROUP_NM = #{groupNm},
+            GROUP_DESC = #{groupDesc},
+<<<<<<< HEAD
+            EIDT_DATE = #{editDate},
+=======
+            EDIT_DATE = #{editDate},
+>>>>>>> testbranch
+            EDITOR = #{editor}
+        WHERE GROUP_NO = #{groupNo}
+    </update>
+
+    <update id="deleteAddressGroup" parameterType="Integer">
+        UPDATE ADDRESS_GROUP 
+        SET USE_STATUS = 1
+        WHERE GROUP_NO = #{groupNo}
+    </update> 
+
+    <select id="selectAddressGroupAll" parameterType="AddressGroupDto" resultMap="AddressGroupDtoResultMap"> 
+<<<<<<< HEAD
+        SELECT AG.GROUP_NO, AG.GROUP_NM, AG.GROUP_DESC, AG.REG_DATE, AG.EIDT_DATE, count(AB.ADDR_NO) AS ADDR_COUNT
+=======
+        SELECT AG.GROUP_NO, AG.GROUP_NM, AG.GROUP_DESC, AG.REG_DATE, AG.EDIT_DATE, count(AB.ADDR_NO) AS ADDR_COUNT
+>>>>>>> testbranch
+        FROM ADDRESS_GROUP AS AG,
+            ADDRESSBOOK AS AB
+        WHERE AG.USE_STATUS != 1 
+            AND GROUP_OWNER = #{groupOwner}
+            AND AG.GROUP_NO = AB.ADDR_GROUP_NO
+            AND AB.USE_STATUS !=1
+            <if test='groupNm != null'>
+            AND (AG.GROUP_NM LIKE '%%${groupNm}%%' OR AG.GROUP_DESC LIKE '%%${groupNm}%%')
+            </if>
+        GROUP BY AG.GROUP_NO
+        UNION
+<<<<<<< HEAD
+        SELECT AG.GROUP_NO, AG.GROUP_NM, AG.GROUP_DESC, AG.REG_DATE, AG.EIDT_DATE, 0 AS ADDR_COUNT
+=======
+        SELECT AG.GROUP_NO, AG.GROUP_NM, AG.GROUP_DESC, AG.REG_DATE, AG.EDIT_DATE, 0 AS ADDR_COUNT
+>>>>>>> testbranch
+        FROM ADDRESS_GROUP AS AG
+        WHERE AG.USE_STATUS != 1 
+            AND GROUP_OWNER = #{groupOwner}
+            AND ( SELECT count(ADDR_NO)
+                FROM ADDRESSBOOK
+                WHERE ADDR_GROUP_NO = AG.GROUP_NO
+                    AND USE_STATUS != 1
+            ) = 0
+            <if test='groupNm != null'>
+            AND (AG.GROUP_NM LIKE '%%${groupNm}%%' OR AG.GROUP_DESC LIKE '%%${groupNm}%%')
+            </if>
+        LIMIT #{pageStart}, #{pageCount}
+    </select>
+
+    <select id="selectAddressGroupAllCount" resultType="int" parameterType="AddressGroupDto"> 
+        SELECT count(GROUP_NO)
+        FROM ADDRESS_GROUP
+        WHERE USE_STATUS != 1 
+            AND GROUP_OWNER = #{groupOwner}
+            <if test='groupNm != null'>
+            AND (GROUP_NM LIKE '%%${groupNm}%%' OR GROUP_DESC LIKE '%%${groupNm}%%')
+            </if>
+    </select> 
+
+    <select id="selectOneAddressGroup" parameterType="Integer" resultMap="AddressGroupDtoResultMap">
+        SELECT * FROM ADDRESS_GROUP
+        WHERE USE_STATUS != 1
+            AND GROUP_NO = #{groupNo}
+    </select>
+
+    <select id="selectGroupDetailByGroupOwner" parameterType="Integer" resultMap="AddressGroupDtoResultMap">
+        SELECT GROUP_NO, GROUP_NM FROM ADDRESS_GROUP
+        WHERE USE_STATUS != 1
+            AND GROUP_OWNER = #{groupOwner}
+    </select>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="io.spring.mailsenderbizdem.mapper.UserAccountMapper"> 
+    <resultMap  type="io.spring.mailsenderbizdem.dto.UserAccountDto" id="UserAccountDtoResultMap">
+            <id  column="USER_NO" property="userNo" />
+            <result  column="USER_ID" property="userId" />
+		    <result column="USER_PW" property="userPw"  />
+		    <result column="USER_NM" property="userNm" />
+            <result column="USER_PHONE" property="userPhone" />
+            <result column="USER_DPT" property="userDpt" />
+            <result column="USER_EMAIL" property="userEmail" />
+            <result column="USER_ADMIN" property="userAdmin" />
+            <result column="USE_STATUS" property="useStatus" />
+            <result column="REG_DATE" property="regDate" />
+            <result column="REG_ID" property="regId" />
+            <result column="EDIT_DATE" property="editDate" />
+            <result column="EDITOR" property="editor" />
+            <result column="ROLE" property="role" />
+  </resultMap>
+
+    <select id="selectOneByUserById" parameterType="String" resultMap="UserAccountDtoResultMap">
+        SELECT * FROM USER_ACCOUNTS WHERE USER_ID = #{userId} AND USE_STATUS != 1
+    </select>
+    <select id="selectAccountAll" resultMap="UserAccountDtoResultMap"> 
+        SELECT * FROM USER_ACCOUNTS WHERE USE_STATUS != 1
+    </select>
+    <insert id="insertUserByCustomUserDetail" parameterType="UserAccountDto">
+        INSERT INTO USER_ACCOUNTS(USER_ID, USER_PW, USER_NM, USER_PHONE, USER_DPT, USER_EMAIL, REG_DATE, REG_ID, EDIT_DATE, EDITOR, ROLE)
+        VALUES(#{userId}, #{userPw}, #{userNm}, #{userPhone}, #{userDpt}, #{userEmail}, now(), #{regId}, #{editDate}, #{editor}, #{role})
+    </insert> 
+</mapper>

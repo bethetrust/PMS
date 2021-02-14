@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 
+<mapper namespace="io.spring.mailsenderbizdem.mapper.NoticeMapper"> 
+    <resultMap  type="io.spring.mailsenderbizdem.dto.NoticeDto" id="NoticeDtoResultMap">
+            <id  column="NOTICE_NO" property="noticeNo" />
+            <result  column="NOTICE_TITLE" property="noticeTitle" />
+		    <result column="NOTICE_CONTENT" property="noticeContent"  />
+		    <result column="NOTICE_ATTACH" property="noticeAttach" />
+            <result column="USE_STATUS" property="useStatus" />
+            <result column="REG_DATE" property="regDate" />
+            <result column="REG_ID" property="regId" />
+            <result column="EDIT_DATE" property="editDate" />
+            <result column="EDITOR" property="editor" />
+  </resultMap>
+
+
+<<<<<<< HEAD
+    <select id="selectNoticeAll" resultMap="NoticeDtoResultMap"> 
+        SELECT * FROM CM_NOTICE
+        WHERE USE_STATUS != 1
+    </select> 
+
+=======
+    <select id="selectNoticeAll" parameterType="NoticeDto" resultMap="NoticeDtoResultMap"> 
+        SELECT NOTICE_NO, NOTICE_TITLE, NOTICE_ATTACH, REG_DATE, EDIT_DATE
+         FROM CM_NOTICE
+        WHERE USE_STATUS != 1
+        <if test='startDate != null'>
+            AND date(REG_DATE) <![CDATA[<=]]> date('${endDate}') AND date(REG_DATE) <![CDATA[>=]]> date('${startDate}')
+        </if>
+        <if test='noticeTitle != null'>
+            AND NOTICE_TITLE LIKE '%%${noticeTitle}%%' 
+        </if>
+        LIMIT #{pageStart}, #{pageCount}
+    </select>
+
+    <select id="selectNoticeAllCount" parameterType="NoticeDto" resultType="int"> 
+        SELECT count(NOTICE_NO)
+         FROM CM_NOTICE
+        WHERE USE_STATUS != 1
+        <if test='startDate != null'>
+            AND date(REG_DATE) <![CDATA[<=]]> date('${endDate}') AND date(REG_DATE) <![CDATA[>=]]> date('${startDate}')
+        </if>
+        <if test='noticeTitle != null'>
+            AND NOTICE_TITLE LIKE '%%${noticeTitle}%%' 
+        </if>
+    </select> 
+
+
+>>>>>>> testbranch
+</mapper>

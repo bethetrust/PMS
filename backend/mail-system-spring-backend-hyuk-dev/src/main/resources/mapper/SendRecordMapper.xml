@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="io.spring.mailsenderbizdem.mapper.SendRecordMapper"> 
+    <resultMap  type="io.spring.mailsenderbizdem.dto.SendRecordDto" id="SendRecordDtoResultMap">
+            <id  column="SEND_REC_NO" property="sendRecNo" />
+            <result column="SEND_REC_TITLE" property="sendRecTitle" />
+		    <result column="SEND_REC_CONTENT" property="sendRecContent"  />
+		    <result column="SEND_REC_RECEIVER" property="sendRecReceiver" />
+            <result column="SEND_REC_SENDER_NO" property="sendRecSenderNo" />
+            <result column="SEND_REC_REFERENCE" property="sendRecRefference" />
+            <result column="SEND_REC_ATTACH" property="sendRecAttach" />
+            <result column="USE_STATUS" property="useStatus" />
+            <result column="REG_DATE" property="regDate" />
+            <result column="REG_ID" property="regId" />
+            <result column="EDIT_DATE" property="editDate" />
+            <result column="EDITOR" property="editor" />
+            <result column="SEND_REC_TPL_NO" property="sendRecTplNo" />
+
+             <result column="TPL_TITLE" property="tplTitle" />
+            
+  </resultMap>
+
+    <insert id="insertSendRecord" useGeneratedKeys="true" keyProperty="sendRecNo" keyColumn="SEND_REC_NO" parameterType="SendRecordDto">
+<<<<<<< HEAD
+        INSERT INTO SEND_RECORD (SEND_REC_TITLE, SEND_REC_CONTENT, SEND_REC_RECEIVER, SEND_REC_TPL_NO,
+                                SEND_REC_SENDER_NO, SEND_REC_REFERENCE, SEND_REC_ATTACH, REG_DATE, REG_ID)
+        VALUES(#{sendRecTitle}, #{sendRecContent}, #{sendRecReceiver}, #{sendRecTplNo},
+                                 #{sendRecSenderNo}, #{sendRecRefference}, #{sendRecAttach}, #{regDate}, #{regId})
+=======
+
+        INSERT INTO SEND_RECORD (SEND_REC_TITLE, SEND_REC_CONTENT, SEND_REC_RECEIVER, SEND_REC_TPL_NO,
+                                SEND_REC_SENDER_NO, SEND_REC_REFERENCE, SEND_REC_ATTACH, REG_DATE, REG_ID)
+        VALUES(#{sendRecTitle}, #{sendRecContent}, #{sendRecReceiver}, #{sendRecTplNo}, #{sendRecSenderNo}, #{sendRecRefference}, #{sendRecAttach}, #{regDate}, #{regId})
+>>>>>>> testbranch
+    
+    </insert>
+
+    <select id="selectSendRecordAll" parameterType="SendRecordDto" resultMap="SendRecordDtoResultMap"> 
+        SELECT SEND_REC_NO, SEND_REC_TITLE, SEND_REC_RECEIVER, REG_DATE
+        FROM SEND_RECORD
+        WHERE USE_STATUS != 1 
+            AND SEND_REC_SENDER_NO = #{sendRecSenderNo}
+        <if test='startDate != null'>
+<<<<<<< HEAD
+            AND date(REG_DATE) <![CDATA[<=]]> date('${endDate}') AND date(REG_DATE) <![CDATA[>=]]> date('${startDate}')
+=======
+
+            AND date(REG_DATE) <![CDATA[<=]]> date('${endDate}') AND date(REG_DATE) <![CDATA[>=]]> date('${startDate}')
+
+>>>>>>> testbranch
+        </if>
+        <if test='sendRecTitle != null'>
+            AND (SEND_REC_TITLE LIKE '%%${sendRecTitle}%%' OR SEND_REC_RECEIVER LIKE '%%${sendRecTitle}%%') 
+        </if>
+        LIMIT #{pageStart}, #{pageCount}
+    </select>
+
+    <select id="selectSendRecordAllCount" parameterType="SendRecordDto" resultType="int"> 
+        SELECT count(SEND_REC_NO)
+        FROM SEND_RECORD
+        WHERE USE_STATUS != 1 
+            AND SEND_REC_SENDER_NO = #{sendRecSenderNo}
+        <if test='startDate != null'>
+<<<<<<< HEAD
+           AND date(REG_DATE) <![CDATA[<=]]> date('${endDate}') AND date(REG_DATE) <![CDATA[>=]]> date('${startDate}')
+=======
+
+           AND date(REG_DATE) <![CDATA[<=]]> date('${endDate}') AND date(REG_DATE) <![CDATA[>=]]> date('${startDate}')
+
+>>>>>>> testbranch
+        </if>
+        <if test='sendRecTitle != null'>
+            AND (SEND_REC_TITLE LIKE '%%${sendRecTitle}%%' OR SEND_REC_RECEIVER LIKE '%%${sendRecTitle}%%') 
+        </if>
+    </select>
+
+<<<<<<< HEAD
+=======
+
+>>>>>>> testbranch
+    <select id="selectSendRecordBySendRecNo" parameterType="SendRecordDto" resultMap="SendRecordDtoResultMap"> 
+        SELECT SR.SEND_REC_NO, SR.SEND_REC_TITLE, SR.SEND_REC_RECEIVER, SR.SEND_REC_CONTENT, SR.SEND_REC_REFERENCE, SR.SEND_REC_ATTACH, SR.REG_DATE, SR.EDIT_DATE,
+        SR.SEND_REC_TPL_NO, MT.TPL_SUB AS TPL_TITLE
+        FROM SEND_RECORD AS SR,
+            MAIL_TEMPLATE AS MT
+        WHERE SR.USE_STATUS != 1 
+            AND SR.SEND_REC_TPL_NO = MT.TPL_NO
+<<<<<<< HEAD
+            AND SR.SEND_REC_NO = #{sendRecNo}
+    </select>
+</mapper>
+=======
+
+            AND SR.SEND_REC_NO = #{sendRecNo}
+    </select>
+</mapper>
+
+>>>>>>> testbranch

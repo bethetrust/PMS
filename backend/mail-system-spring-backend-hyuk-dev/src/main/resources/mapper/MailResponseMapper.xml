@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="io.spring.mailsenderbizdem.mapper.MailResponseMapper"> 
+    <resultMap  type="io.spring.mailsenderbizdem.dto.MailResponseDto" id="MailResponseDtoResultMap">
+            <id  column="RESPONSE_NO" property="responseNo" />
+            <result column="RECEIVER_EMAIL" property="receiverEmail" />
+		    <result column="RECEIVER_NAME" property="receiverName"  />
+		    <result column="RECEIVER_PHONE" property="receiverPhone" />
+            <result column="SEND_REC_NO" property="sendRecNo" />
+            <result column="USE_STATUS" property="useStatus" />
+            <result column="REG_DATE" property="regDate" />
+            <result column="REG_ID" property="regId" />
+            <result column="EDIT_DATE" property="editDate" />
+            <result column="EDITOR" property="editor" />
+  </resultMap>
+    <insert id="insertMailResponse" useGeneratedKeys="true" keyProperty="responseNo" keyColumn="RESPONSE_NO" parameterType="MailResponseDto">
+        INSERT INTO MAIL_RESPONSE (RECEIVER_EMAIL, RECEIVER_NAME, RECEIVER_PHONE, 
+        SEND_REC_NO, REG_DATE, REG_ID)
+        VALUES(#{receiverEmail}, #{receiverName}, #{receiverPhone},
+                                 #{sendRecNo}, #{regDate}, 0)
+    </insert>
+
+    <select id="selectMailResponseAll" parameterType="MailResponseDto" resultMap="MailResponseDtoResultMap"> 
+        SELECT RECEIVER_EMAIL, RECEIVER_NAME, RECEIVER_PHONE, REG_DATE
+        FROM MAIL_RESPONSE
+        WHERE USE_STATUS != 1 
+            AND SEND_REC_NO = #{sendRecNo}
+        <if test='receiverEmail != null'>
+            AND (RECEIVER_EMAIL LIKE '%%${receiverEmail}%%' OR RECEIVER_NAME LIKE '%%${receiverEmail}%%') 
+        </if>
+        LIMIT #{pageStart}, #{pageCount}
+    </select>
+
+    <select id="selectMailResponseAllCount" parameterType="MailResponseDto" resultType="int"> 
+        SELECT count(RESPONSE_NO)
+        FROM MAIL_RESPONSE
+        WHERE USE_STATUS != 1 
+            AND SEND_REC_NO = #{sendRecNo}
+        <if test='receiverEmail != null'>
+            AND (RECEIVER_EMAIL LIKE '%%${receiverEmail}%%' OR RECEIVER_NAME LIKE '%%${receiverEmail}%%') 
+        </if>
+    </select>
+
+    <!-- <update id="deleteMailResponse" parameterType="int">
+        UPDATE MAIL_RESPONSE 
+        SET USE_STATUS = 1
+        WHERE DRAFT_NO = #{draftNo}
+    </update> -->
+</mapper>

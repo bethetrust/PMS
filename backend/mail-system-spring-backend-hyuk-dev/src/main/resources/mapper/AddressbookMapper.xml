@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="io.spring.mailsenderbizdem.mapper.AddressbookMapper"> 
+    <resultMap  type="io.spring.mailsenderbizdem.dto.AddressbookDto" id="AddressbookDtoResultMap">
+            <id  column="ADDR_NO" property="addrNo" />
+            <result  column="ADDR_NM" property="addrNm" />
+		    <result column="ADDR_EMAIL" property="addrEmail"  />
+		    <result column="ADDR_GROUP_NO" property="addrGroupNo" />
+            <result column="ADDR_OWNER" property="addrOwner" />
+            <result column="REG_DATE" property="regDate" />
+            <result column="REG_ID" property="regId" />
+            <result column="EDIT_DATE" property="editDate" />
+            <result column="EDITOR" property="editor" />
+
+            <!--plus for search -->
+            <result column="ADDR_GROUP_NM" property="addrGroupNm"/>
+  </resultMap>
+
+    <insert id="insertAddressbook" useGeneratedKeys="true" keyProperty="addrNo" keyColumn="ADDR_NO" parameterType="AddressbookDto">
+        INSERT INTO ADDRESSBOOK (ADDR_NM, ADDR_EMAIL, ADDR_GROUP_NO, ADDR_OWNER, REG_DATE, REG_ID)
+        VALUES(#{addrNm}, #{addrEmail}, #{addrGroupNo}, #{addrOwner}, #{regDate}, #{regId})
+    
+    </insert>
+    <update id="updateAddressbook"  parameterType="AddressbookDto">
+        UPDATE ADDRESSBOOK 
+        SET ADDR_NM = #{addrNm},
+            ADDR_EMAIL = #{addrEmail},
+<<<<<<< HEAD
+            EIDT_DATE = #{editDate},
+=======
+            EDIT_DATE = #{editDate},
+>>>>>>> testbranch
+            EDITOR = #{editor}
+        WHERE ADDR_NO = #{addrNo}
+    </update>
+
+    <update id="deleteAddressbook" parameterType="Integer">
+        UPDATE ADDRESSBOOK 
+        SET USE_STATUS = 1
+        WHERE ADDR_NO = #{addrNo}
+    </update> 
+
+    <select id="selectAddressbookAll" parameterType="AddressbookDto" resultMap="AddressbookDtoResultMap"> 
+        SELECT AD.ADDR_NO, AD.ADDR_NM, AD.ADDR_EMAIL, AD.ADDR_GROUP_NO, AD.REG_DATE, AD.REG_ID, AD.EDIT_DATE, AD.EDITOR, AG.GROUP_NM AS ADDR_GROUP_NM
+        FROM ADDRESSBOOK AS AD,
+             ADDRESS_GROUP AS AG
+        WHERE AD.USE_STATUS != 1 
+            AND AD.ADDR_OWNER = #{addrOwner}
+            AND AD.ADDR_GROUP_NO = AG.GROUP_NO
+        <if test='addrGroupNo != 0'>
+            AND AD.ADDR_GROUP_NO = #{addrGroupNo}
+        </if>
+        <if test='addrNm != null'>
+            AND (AD.ADDR_NM LIKE '${addrNm}%%' OR AD.ADDR_EMAIL LIKE '${addrNm}%%')
+        </if>
+        <if test='pageCount != 0'>
+            LIMIT #{pageStart}, #{pageCount}
+        </if>
+    </select>
+
+    <select id="selectAddressbookAllCount" resultType="int" parameterType="AddressGroupDto"> 
+            SELECT count(AD.ADDR_NO)
+            FROM ADDRESSBOOK AS AD,
+                ADDRESS_GROUP AS AG
+            WHERE AD.USE_STATUS != 1 
+                AND AD.ADDR_OWNER = #{addrOwner}
+                AND AD.ADDR_GROUP_NO = AG.GROUP_NO
+            <if test='addrGroupNo != 0'>
+            AND AD.ADDR_GROUP_NO = #{addrGroupNo}
+            </if>
+            <if test='addrNm != null'>
+            AND (AD.ADDR_NM LIKE '${addrNm}%%' OR AD.ADDR_EMAIL LIKE '${addrNm}%%')
+            </if>
+    </select>  
+
+    <select id="selectOneAddressbook" parameterType="Integer" resultMap="AddressbookDtoResultMap">
+        SELECT AD.ADDR_NO, AD.ADDR_NM, AD.ADDR_EMAIL, AD.ADDR_GROUP_NO, AD.REG_DATE, AD.REG_ID, AD.EDIT_DATE, AD.EDITOR, AG.GROUP_NM AS ADDR_GROUP_NM
+        FROM ADDRESSBOOK AS AD,
+             ADDRESS_GROUP AS AG
+        WHERE AD.USE_STATUS != 1 
+            AND AD.ADDR_NO = #{addrNo}
+            AND AD.ADDR_GROUP_NO = AG.GROUP_NO
+    </select>
+
+    <select id="selectAddrDetailByGroupOwner" parameterType="AddressbookDto" resultMap="AddressbookDtoResultMap">
+        SELECT ADDR_NO, ADDR_NM, ADDR_EMAIL FROM ADDRESSBOOK
+        WHERE USE_STATUS != 1
+            AND ADDR_GROUP_NO = #{addrGroupNo}
+            AND ADDR_NM LIKE #{addrNm} 
+            OR ADDR_EMAIL LIKE #{addrNm} 
+    </select>
+
+    <select id="selectAddrDetailOrderByAddrGroupNo" parameterType="AddressbookDto" resultMap="AddressbookDtoResultMap">
+        SELECT AD.ADDR_NO, AD.ADDR_NM, AD.ADDR_EMAIL, AG.GROUP_NM AS ADDR_GROUP_NM, AD.ADDR_GROUP_NO
+        FROM ADDRESSBOOK AS AD,
+            ADDRESS_GROUP AS AG
+        WHERE AD.USE_STATUS != 1
+            AND AD.ADDR_OWNER = #{addrOwner}
+            AND AD.ADDR_GROUP_NO = AG.GROUP_NO
+        GROUP BY AD.ADDR_GROUP_NO, ADDR_GROUP_NM, AD.ADDR_NO, AD.ADDR_EMAIL, AD.ADDR_NM
+        ORDER BY AD.ADDR_GROUP_NO DESC
+    </select>
+
+</mapper>

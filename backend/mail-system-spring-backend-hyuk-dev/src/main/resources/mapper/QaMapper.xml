@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ 
+<mapper namespace="io.spring.mailsenderbizdem.mapper.QaMapper"> 
+    <resultMap  type="io.spring.mailsenderbizdem.dto.QaDto" id="QaDtoResultMap">
+            <id  column="QA_NO" property="qaNo" />
+            <result  column="QA_TITLE" property="qaTitle" />
+		    <result column="QA_CONTENT" property="qaContent"  />
+		    <result column="QA_ATTACH" property="qaAttach" />
+            <result column="QA_GROUP" property="qaGroup" />
+            <result column="QA_REPLY_CONTENT" property="qaReplyContent" />
+            <result column="USE_STATUS" property="useStatus" />
+            <result column="REG_DATE" property="regDate" />
+            <result column="REG_ID" property="regId" />
+            <result column="EDIT_DATE" property="editDate" />
+            <result column="EDITOR" property="editor" />
+            
+            <result column="USER_NM" property="qaUserNm"/>
+            <result column="REPLY_YN" property="replyYn"/>
+  </resultMap>
+  
+<<<<<<< HEAD
+  <select id="selectQaAll" parameterType="Integer" resultMap="QaDtoResultMap">
+=======
+  <select id="selectQaAll" parameterType="QaDto" resultMap="QaDtoResultMap">
+>>>>>>> testbranch
+  	SELECT q.QA_NO
+  	, q.QA_TITLE
+  	, q.QA_CONTENT
+  	, q.QA_ATTACH
+  	, q.QA_GROUP
+  	, q.QA_REPLY_CONTENT
+  	, q.USE_STATUS
+  	, q.REG_DATE
+  	, q.REG_ID
+  	, q.EDIT_DATE
+  	, q.EDITOR
+  	, u.USER_NM AS USER_NM
+  	,  case when q.QA_REPLY_CONTENT IS NULL then 'N' ELSE 'Y' END AS REPLY_YN
+	FROM CM_QA AS q
+		, USER_ACCOUNTS AS u
+	WHERE q.USE_STATUS != 1
+		AND q.REG_ID = u.USER_NO
+<<<<<<< HEAD
+		AND q.REG_ID = #{userNo}
+=======
+		AND q.REG_ID = #{regId}
+		<if test='startDate != null'>
+            AND date(q.REG_DATE) <![CDATA[<=]]> date('${endDate}') AND date(q.REG_DATE) <![CDATA[>=]]> date('${startDate}')
+        </if>
+        <if test='qaTitle != null'>
+            AND QA_TITLE LIKE '%%${qaTitle}%%' 
+        </if>
+        LIMIT #{pageStart}, #{pageCount}
+  </select>
+
+  <select id="selectQaAllCount" parameterType="QaDto" resultType="int">
+  	SELECT count(q.QA_NO)
+	FROM CM_QA AS q
+		, USER_ACCOUNTS AS u
+	WHERE q.USE_STATUS != 1
+		AND q.REG_ID = u.USER_NO
+		AND q.REG_ID = #{regId}
+		<if test='startDate != null'>
+            AND date(q.REG_DATE) <![CDATA[<=]]> date('${endDate}') AND date(q.REG_DATE) <![CDATA[>=]]> date('${startDate}')
+        </if>
+        <if test='qaTitle != null'>
+            AND QA_TITLE LIKE '%%${qaTitle}%%' 
+        </if>
+        LIMIT #{pageStart}, #{pageCount}
+>>>>>>> testbranch
+  </select>
+  
+   <insert id="insertQa" useGeneratedKeys="true" keyProperty="qaNo" keyColumn="QA_NO" parameterType="QaDto">
+	INSERT INTO CM_QA
+	(QA_TITLE
+	, QA_CONTENT
+	, QA_ATTACH
+	, QA_GROUP
+	, REG_DATE
+	, REG_ID)
+	VALUES
+	(#{qaTitle}
+	, #{qaContent}
+	, #{qaAttach}
+	, #{qaGroup}
+	, #{regDate}
+	, #{regId})
+
+        
+   </insert>
+   
+   <update id="updateQa" parameterType="qaDto">
+   	UPDATE CM_QA
+   	SET QA_TITLE = #{qaTitle}
+   	, QA_CONTENT = #{qaContent}
+   	, QA_ATTACH = #{qaAttach}
+   	, QA_GROUP = #{qaGroup}
+   	, EDIT_DATE = #{editDate}
+   	, EDITOR = #{editor}
+   	WHERE QA_NO = #{qaNo}
+   	
+   </update>
+   
+   <select id="selectOneQa" parameterType="Integer" resultMap="QaDtoResultMap">
+   	SELECT q.QA_NO
+	, q.QA_TITLE
+	, q.QA_CONTENT
+	, q.QA_ATTACH
+	, q.QA_GROUP
+	, q.QA_REPLY_CONTENT
+	, q.USE_STATUS
+	, q.REG_DATE
+	, q.REG_ID
+	, q.EDIT_DATE
+	, q.EDITOR
+	, u.USER_NM AS USER_NM
+	, case when q.QA_REPLY_CONTENT IS NULL then 'N' ELSE 'Y' END AS REPLY_YN
+	FROM CM_QA AS q, USER_ACCOUNTS AS u
+	WHERE q.USE_STATUS != 1
+		AND q.REG_ID = u.USER_NO
+		AND q.QA_NO = #{parsedQaNo}
+   </select>
+  
+  
+
+
+   
+
+</mapper>

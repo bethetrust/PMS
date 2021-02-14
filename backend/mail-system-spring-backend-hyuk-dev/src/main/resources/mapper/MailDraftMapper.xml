@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="io.spring.mailsenderbizdem.mapper.MailDraftMapper"> 
+    <resultMap  type="io.spring.mailsenderbizdem.dto.MailDraftDto" id="MailDraftDtoResultMap">
+            <id  column="DRAFT_NO" property="draftNo" />
+            <result column="DRAFT_TITLE" property="draftTitle" />
+		    <result column="DRAFT_DESC" property="draftDesc"  />
+		    <result column="DRAFT_RECEIVER" property="draftReceiver" />
+            <result column="DRAFT_SENDER_NO" property="draftSenderNo" />
+            <result column="DRAFT_REFERENCE" property="draftReference" />
+            <result column="DRAFT_ATTACH" property="draftAttach" />
+            <result column="USE_STATUS" property="useStatus" />
+            <result column="REG_DATE" property="regDate" />
+            <result column="REG_ID" property="regId" />
+            <result column="EDIT_DATE" property="editDate" />
+            <result column="EDITOR" property="editor" />
+            <result column="DRAFT_TPL_NO" property="draftTplNo" />
+  </resultMap>
+
+    <insert id="insertMailDraft" useGeneratedKeys="true" keyProperty="draftNo" keyColumn="DRAFT_NO" parameterType="MailDraftDto">
+        INSERT INTO MAIL_DRAFT (DRAFT_TITLE, DRAFT_DESC, DRAFT_RECEIVER, 
+                                DRAFT_SENDER_NO, DRAFT_REFERENCE, DRAFT_ATTACH, REG_DATE, REG_ID, DRAFT_TPL_NO)
+        VALUES(#{draftTitle}, #{draftDesc}, #{draftReceiver},
+                                 #{draftSenderNo}, #{draftReference}, #{draftAttach}, #{regDate}, #{regId}, #{draftTplNo})
+    </insert>
+
+    <update id="updateMailDraft" parameterType="MailDraftDto">
+        UPDATE MAIL_DRAFT 
+        SET DRAFT_TITLE = #{draftTitle}, 
+            DRAFT_DESC = #{draftDesc}, 
+            DRAFT_RECEIVER = #{draftReceiver},
+            DRAFT_REFERENCE = #{draftReference},
+            DRAFT_ATTACH = #{draftAttach},
+            EDIT_DATE = #{editDate},
+            EDITOR = #{editor},
+            DRAFT_TPL_NO = #{draftTplNo}
+        WHERE DRAFT_SENDER_NO = #{draftSenderNo}
+            AND DRAFT_NO = #{draftNo}
+    </update>
+
+    <select id="selectMailDraftAll" parameterType="MailDraftDto" resultMap="MailDraftDtoResultMap"> 
+        SELECT DRAFT_NO, DRAFT_TITLE, DRAFT_RECEIVER, REG_DATE, EDIT_DATE
+        FROM MAIL_DRAFT
+        WHERE USE_STATUS != 1 
+            AND DRAFT_SENDER_NO = #{draftSenderNo}
+        <if test='startDate != null'>
+            AND date(REG_DATE) <![CDATA[<=]]> date('${endDate}') AND date(REG_DATE) <![CDATA[>=]]> date('${startDate}')
+        </if>
+        <if test='draftTitle != null'>
+            AND (DRAFT_TITLE LIKE '%%${draftTitle}%%' OR DRAFT_RECEIVER LIKE '%%${draftTitle}%%') 
+        </if>
+        LIMIT #{pageStart}, #{pageCount}
+    </select>
+
+    <select id="selectMailDraftdAllCount" parameterType="MailDraftDto" resultType="int"> 
+        SELECT count(DRAFT_NO)
+        FROM MAIL_DRAFT
+        WHERE USE_STATUS != 1 
+            AND DRAFT_SENDER_NO = #{draftSenderNo}
+        <if test='startDate != null'>
+            AND date(REG_DATE) <![CDATA[<=]]> date('${endDate}') AND date(REG_DATE) <![CDATA[>=]]> date('${startDate}')
+        </if>
+        <if test='draftTitle != null'>
+            AND (DRAFT_TITLE LIKE '%%${draftTitle}%%' OR DRAFT_RECEIVER LIKE '%%${draftTitle}%%') 
+        </if>
+    </select>
+
+
+    <select id="selectMailDraftByDraftNo" parameterType="MailDraftDto" resultMap="MailDraftDtoResultMap"> 
+        SELECT *
+        FROM MAIL_DRAFT
+        WHERE USE_STATUS != 1 
+            AND DRAFT_SENDER_NO = #{draftSenderNo}
+            AND DRAFT_NO = #{draftNo}
+    </select>
+
+    <update id="deleteMailDraft" parameterType="int">
+        UPDATE MAIL_DRAFT 
+        SET USE_STATUS = 1
+        WHERE DRAFT_NO = #{draftNo}
+    </update>
+</mapper>

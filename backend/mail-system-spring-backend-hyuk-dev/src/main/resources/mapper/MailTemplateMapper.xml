@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="io.spring.mailsenderbizdem.mapper.MailTemplateMapper"> 
+    <resultMap  type="io.spring.mailsenderbizdem.dto.MailTemplateDto" id="MailTemplateDtoResultMap">
+            <id  column="TPL_NO" property="tplNo" />
+            <result  column="TPL_SUB" property="tplSub" />
+		    <result column="TPL_DESC" property="tplDesc"  />
+		    <result column="TPL_CONTENT" property="tplContent" />
+            <result column="TPL_IMGEAS_DIR" property="tplImagesDir" />
+            <result column="TPL_USER_NO" property="tplUserNo" />
+            <result column="USE_STATUS" property="useStatus" />
+            <result column="REG_DATE" property="regDate" />
+            <result column="REG_ID" property="regId" />
+            <result column="EDIT_DATE" property="editDate" />
+            <result column="EDITOR" property="editor" />
+  </resultMap>
+
+    <insert id="insertMailTemplate" useGeneratedKeys="true" keyProperty="tplNo" keyColumn="TPL_NO" parameterType="MailTemplateDto">
+        INSERT INTO MAIL_TEMPLATE(TPL_SUB, TPL_DESC, TPL_CONTENT, TPL_IMAGES_DIR, TPL_USER_NO, REG_DATE, REG_ID)
+        VALUES(#{tplSub}, #{tplDesc}, #{tplContent}, #{tplImagesDir}, #{tplUserNo}, #{regDate}, #{regId})
+    
+        <!-- <selectKey resultType="Integer" keyProperty="tplNo" order="AFTER">
+            SELECT TPL_NO FROM MAIL_TEMPLATE WHERE TPL_USER_NO = #{tplUserNo} ORDER BY(REG_DATE) DESC LIMIT 1
+        </selectKey> -->
+    </insert>
+    <update id="updateMailTemplate"  parameterType="MailTemplateDto">
+        UPDATE MAIL_TEMPLATE
+        SET TPL_SUB = #{tplSub},
+            TPL_DESC = #{tplDesc},
+            TPL_CONTENT = #{tplContent},
+            TPL_IMAGES_DIR = #{tplImagesDir},
+            TPL_USER_NO = #{tplUserNo},
+            EDIT_DATE = #{editDate},
+            EDITOR = #{editor}
+        WHERE TPL_NO = #{tplNo}
+    </update>
+    <update id="deleteMailTemplate" parameterType="Integer">
+        UPDATE MAIL_TEMPLATE 
+        SET USE_STATUS = 1
+        WHERE TPL_NO = #{tplNo}
+    </update> 
+    <select id="selectMailTemplateAll" parameterType="MailTemplateDto" resultMap="MailTemplateDtoResultMap"> 
+        SELECT TPL_NO, TPL_SUB, TPL_DESC, REG_DATE, EDIT_DATE
+        FROM MAIL_TEMPLATE
+        WHERE USE_STATUS != 1 
+            AND TPL_USER_NO = #{tplUserNo}
+        <if test='tplSub!=null'>
+            AND (TPL_SUB LIKE '%%${tplSub}%%' OR TPL_DESC LIKE '%%${tplSub}%%') 
+        </if>
+        LIMIT #{pageStart}, #{pageCount}
+    </select>
+
+    <select id="selectMailTemplateCount" parameterType="MailTemplateDto" resultType="int"> 
+        SELECT count(TPL_NO) 
+        FROM MAIL_TEMPLATE
+        WHERE USE_STATUS != 1 
+            AND TPL_USER_NO = #{tplUserNo}
+        <if test='tplSub!=null'>
+            AND (TPL_SUB LIKE '%%${tplSub}%%' OR TPL_DESC LIKE '%%${tplSub}%%') 
+        </if>
+    </select> 
+
+    <select id="selectOneMailTemplate" parameterType="Integer" resultMap="MailTemplateDtoResultMap">
+        SELECT * FROM MAIL_TEMPLATE
+        WHERE USE_STATUS != 1
+            AND TPL_NO = #{tplNo}
+    </select>
+
+    <select id="selectDetailMailTemplate" parameterType="MailTemplateDto" resultMap="MailTemplateDtoResultMap">
+        SELECT TPL_NO, TPL_SUB, TPL_DESC
+        FROM MAIL_TEMPLATE
+        WHERE USE_STATUS != 1
+            AND TPL_USER_NO = 2
+        ORDER BY REG_DATE DESC
+        LIMIT #{pageStart}, #{pageCount};
+    </select>
+
+</mapper>
